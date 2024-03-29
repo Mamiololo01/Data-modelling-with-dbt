@@ -14,13 +14,15 @@ Installing and configuring dbt core.
 Begin to build models
 
 
-Docker pull Postgres:latest
+Docker pull postgres:latest
 
 Docker image ls. To verify
 
 The command to run the Postgres instance is:
 
 'docker run -dp 5431:5432 -e "POSTGRES_PASSWORD=pass" -e "POSTGRES_USER=postgres" -v /home/postgres-target/:/var/lib/postgresql/data  -- name dbtmodeldb   postgres:latest'
+
+The /home/postgres-target ensures that if the image is removed, the configuration on the local system will not be wiped out.
 
 Connect to the database server "Docker exec -it dbtmodeldb psql -U postgres -h localhost".  
 
@@ -39,6 +41,11 @@ Connect to database.  \c test
 \d shows the schema and database
 
 Validate that dataset is loaded to the databas, select * from  table and use count functions
+
+dbt is a transformation workflow that helps you get more work done while producing higher quality results. You can use dbt to modularize and centralize your analytics code, while also providing your data team with guardrails typically found in software engineering workflows. Collaborate on data models, version them, and test and document your queries before safely deploying them to production, with monitoring and visibility.
+
+dbt compiles and runs your analytics code against your data platform, enabling you and your team to collaborate on a single source of truth for metrics, insights, and business definitions. This single source of truth, combined with the ability to define tests for your data, reduces errors when logic changes, and alerts you when issues arise.
+
 
 Installing and configuring dbt  https://docs.getdbt.com/guides
 
