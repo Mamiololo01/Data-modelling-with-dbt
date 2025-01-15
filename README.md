@@ -1,73 +1,100 @@
-# Data-modelling-with-dbt
-Step-by-Step for handling 1M+ dataset using dbt with Docker and Postgres as database
+# Data Modelling with dbt
 
-Procedures:
+This repository provides a step-by-step guide for handling a dataset with over 1 million records using dbt, Docker, and PostgreSQL. 
 
-Start up Docker
+## Table of Contents
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Setup](#setup)
+  - [Docker and PostgreSQL](#docker-and-postgresql)
+  - [Python Data Loader](#python-data-loader)
+  - [dbt Installation and Configuration](#dbt-installation-and-configuration)
+- [Data Modelling with dbt](#data-modelling-with-dbt)
+- [Validation](#validation)
+- [Resources](#resources)
+- [License](#license)
 
-Pull the postgres image from docker hub and connect with it
+## Introduction
+This guide demonstrates how to set up a local environment using Docker, load a large dataset into PostgreSQL, and use dbt (data build tool) for data transformation and modelling.
 
-Running the docker instance and sends 1M+ records into dockerized db using python script.
+## Requirements
+- Docker
+- Python 3.x
+- dbt Core
+- PostgreSQL
 
-Installing and configuring dbt core.
+## Setup
 
-Begin to build models
+### Docker and PostgreSQL
 
+1. **Start Docker**:
+   Ensure Docker is running on your system.
 
-Docker pull postgres:latest
+ **Pull PostgreSQL Image**:
+   docker pull postgres:latest	
+   Verify Docker Image: docker image ls
 
-Docker image ls. To verify
+2. Run PostgreSQL Instance: docker run -dp 5431:5432 -e "POSTGRES_PASSWORD=pass" -e "POSTGRES_USER=postgres" -v /home/postgres-target/:/var/lib/postgresql/data --name dbtmodeldb postgres:latest 
+The /home/postgres-target directory ensures that the configuration on the local system is retained even if the image is removed.
 
-The command to run the Postgres instance is:
+3. Connect to PostgreSQL: docker exec -it dbtmodeldb psql -U postgres -h localhost
 
-'docker run -dp 5431:5432 -e "POSTGRES_PASSWORD=pass" -e "POSTGRES_USER=postgres" -v /home/postgres-target/:/var/lib/postgresql/data  -- name dbtmodeldb   postgres:latest'
-
-The /home/postgres-target ensures that if the image is removed, the configuration on the local system will not be wiped out.
-
-Connect to the database server "Docker exec -it dbtmodeldb psql -U postgres -h localhost".  
-
-Create database
-\l to show the database
+4. Create Database: 
 CREATE DATABASE test;
-\q text to exit the database
-\dn to list schema
+ \l -- List databases
+ \q -- Exit PostgreSQL
 
+Python Data Loader
+1. Transform and Load Data:
+    * Use the provided Python script (postgres_dataloader.py) to transform and load the dataset into PostgreSQL.
+    * Run the script:shpython postgres_dataloader.py
+2. Verify Data Load:
+    * Connect to the test database: 
+    \c test
+    \d -- Show schema and tables
+    * Validate that the dataset is loaded:
+    SELECT COUNT(*) FROM your_table;
 
-Python file (postgres_dataloader.py) does the transformation and loading of the excel file into the postgres
-run "Python postgres_dataloader.py"
+dbt Installation and Configuration
+1. Install dbt Core and dbt-Postgres:
+   python -m pip install dbt-core dbt-postgres
 
-Connect to database.  \c test
+2. Verify Installation:
+   dbt --version
 
-\d shows the schema and database
+3. Configure dbt:
+    * Create a profiles.yml file in the .dbt directory with the necessary configuration.
+    * Ensure the PostgreSQL port is set to 5432.
 
-Validate that dataset is loaded to the databas, select * from  table and use count functions
+4. Debug Configuration:
+   dbt debug
 
-dbt is a transformation workflow that helps you get more work done while producing higher quality results. You can use dbt to modularize and centralize your analytics code, while also providing your data team with guardrails typically found in software engineering workflows. Collaborate on data models, version them, and test and document your queries before safely deploying them to production, with monitoring and visibility.
+Data Modelling with dbt
 
-dbt compiles and runs your analytics code against your data platform, enabling you and your team to collaborate on a single source of truth for metrics, insights, and business definitions. This single source of truth, combined with the ability to define tests for your data, reduces errors when logic changes, and alerts you when issues arise.
+1. Run dbt: dbt run
+This executes the ETL flow based on the configuration in the models folder. The schema.yml and hacker.sql files provide the layout for the modelling.
 
+2. Check New Tables:
+    * Verify the new tables in the database:
+    \d
+3. Alternative Initialization:
+    * You can also initialize a new dbt project:
+    dbt init test_dbtool
+    * Follow the prompts to set up the project.
 
-Installing and configuring dbt  https://docs.getdbt.com/guides
+Validation:
+   Verify Data:
+    * Use SQL queries to validate the transformed data in the new tables created by dbt.
 
-Install with pip
+Resources:
+* dbt Documentation
+* Docker Documentation
+* PostgreSQL Documentation
 
-python -m pip install dbt-core dbt-postgres
+License:  This project is licensed under the MIT License - see the LICENSE file for details.
 
-Then run "dbt version"  to show the version and plugins core and postgres
+Feel free to open an issue or contact the maintainers if you have any questions or need assistance.
 
-Now configure dbt
-
-.dbt/profiles.yml and data added
-
-Ensure port is 5432
-
-Execute dbt debug shows all check/test passed
-
-Execute " dbt run" ETL flow wrt configuration on the model folder. Schema.yml and hacker.sql under the model folder provides the layout for the modelling by dbt
-
-Once completed, there will be more tables in the database using the "\d" command.
-
-Alternatively on a diff folder, you can use dbt init test_dbtool and follow the prompt
-
+Happy coding!!
 
 
